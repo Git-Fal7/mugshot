@@ -1,0 +1,44 @@
+name: build packages
+
+on: [ create, push, pull_request ]
+
+env:
+  APP_NAME: 'mugshot'
+  APP_VERSION: '0.4.3-GIT'
+  DEV_DEPENDS: 'gir1.2-gtk-3.0 python3 python3-dbus python3-distutils python3-distutils-extra python3-gi python3-pexpect'
+  MAINTAINER: 'Sean Davis'
+  DESC: 'Program to update personal user details'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: |
+          sudo apt-get install ${{ env.DEV_DEPENDS }}
+
+      - name: Create Folders
+        run: |
+          mkdir -p .rpmpkg/usr/
+        
+      - name: Build the rpm directory
+        run: |
+          python setup.py install --root "./.rpmpkg/" --optimize=1
+
+      - uses: jiro4989/build-rpm-action@v2
+        with:
+          summary: '${{ env.DESC }}'
+          package: ${{ env.APP_NAME }}
+          package_root: .rpmpkg
+          maintainer: ${{ env.MAINTAINER }}
+          version: ${{ env.APP_VERSION }}
+          arch: 'x86_64'
+          desc: '${{ env.DESC }}'
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: artifact-rpm
+          path: |
+            ./*.rpm
