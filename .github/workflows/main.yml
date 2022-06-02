@@ -4,7 +4,7 @@ on: [ create, push, pull_request ]
 
 env:
   APP_NAME: 'mugshot'
-  APP_VERSION: '0.4.3-GIT'
+  APP_VERSION: '0.4.3'
   DEV_DEPENDS: 'gir1.2-gtk-3.0 python3 python3-dbus python3-distutils python3-distutils-extra python3-gi python3-pexpect'
   MAINTAINER: 'Sean Davis'
   DESC: 'Program to update personal user details'
